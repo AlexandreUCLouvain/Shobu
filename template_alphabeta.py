@@ -58,9 +58,13 @@ class AlphaBetaAgent(Agent):
         Returns:
             float: The evaluated score of the state.
         """
-        player_zero = sum(len(ensemble) for liste_sets in state.board for ensemble in liste_sets[::2])
-        player_one = sum(len(ensemble) for liste_sets in state.board for ensemble in liste_sets[1::2])
+        player = state.to_move
+        player_zero = min(len(liste_sets[0]) for liste_sets in state.board)
+        player_one = min(len(liste_sets[1]) for liste_sets in state.board)
+        if(player):
+            return player_one - player_zero
         return player_zero - player_one
+
 
     def alpha_beta_search(self, state):
         """Implements the alpha-beta pruning algorithm to find the best action.
