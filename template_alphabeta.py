@@ -86,7 +86,19 @@ class AlphaBetaAgent(Agent):
             tuple: A tuple containing the best value achievable from this state and the action that leads to this value.
                 If the state is a terminal state or the depth limit is reached, the action will be None.
         """
-        ...
+        if(depth == 0) or self.game.is_terminal(state):
+            return eval(state)
+
+        maxEval = -float('inf')
+        for action in game.actions(state):
+            newEval = min_value((self.game.result(state,action)),alpha, beta, depth-1)
+            maxEval = max(newEval, maxEval)
+            alpha = max(newEval, alpha)
+            if(beta < alpha):
+                break
+
+        return maxEval
+        
 
 
     def min_value(self, state, alpha, beta, depth):
@@ -106,4 +118,13 @@ class AlphaBetaAgent(Agent):
             tuple: A tuple containing the best value achievable from this state for the opponent and the action that leads to this value.
                 If the state is a terminal state or the depth limit is reached, the action will be None.
         """
-        ...
+        if(depth == 0) or self.game.is_terminal(state):
+            return eval(state)
+        
+        minEval = float('inf')
+        for action in game.actions(state):
+            newEval = max_value((self.game.result(state,action)),alpha, beta, depth-1)
+            minEval = max(newEval, minEval)
+            alpha = max(newEval, alpha)
+
+        return minEval
