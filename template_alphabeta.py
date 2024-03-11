@@ -46,8 +46,8 @@ class AlphaBetaAgent(Agent):
             bool: True if the search should be cut off, False otherwise.
         """
         if depth == self.max_depth or self.game.is_terminal(state):
-            return False
-        return True
+            return True
+        return False
     
     def eval(self, state):
         """Evaluates the given state and returns a score from the perspective of the agent's player.
@@ -90,18 +90,20 @@ class AlphaBetaAgent(Agent):
             tuple: A tuple containing the best value achievable from this state and the action that leads to this value.
                 If the state is a terminal state or the depth limit is reached, the action will be None.
         """
-        if(depth == 0) or self.game.is_terminal(state):
-            return eval(state)
+        if(self.is_cutoff(state,depth)):
+            return (self.eval(state),None)
 
         maxEval = -float('inf')
-        for action in game.actions(state):
-            newEval = min_value((self.game.result(state,action)),alpha, beta, depth-1)
+        bestAction = None 
+        for action in self.game.actions(state):
+            newEval = self.min_value((self.game.result(state,action)),alpha, beta, depth+1)[0]
             maxEval = max(newEval, maxEval)
+            if(bestAction == None or maxEval == newEval) : 
+                bestAction = action
             alpha = max(newEval, alpha)
             if(beta < alpha):
                 break
-
-        return maxEval
+        return (maxEval,bestAction)
         
 
 
@@ -122,13 +124,18 @@ class AlphaBetaAgent(Agent):
             tuple: A tuple containing the best value achievable from this state for the opponent and the action that leads to this value.
                 If the state is a terminal state or the depth limit is reached, the action will be None.
         """
-        if(depth == 0) or self.game.is_terminal(state):
-            return eval(state)
+        if(self.is_cutoff(state,depth)):
+            return (self.eval(state),None)
         
         minEval = float('inf')
-        for action in game.actions(state):
-            newEval = max_value((self.game.result(state,action)),alpha, beta, depth-1)
-            minEval = max(newEval, minEval)
-            alpha = max(newEval, alpha)
+        bestAction = None
+        for action in self.game.actions(state):
+            newEval = self.max_value((self.game.result(state,action)),alpha, beta, depth+1)[0]
+            minEval = min(newEval, minEval)
+            if(bestAction == None or newEval == minEval):
+                bestAction = action
+            beta = min(newEval, beta)
+            if beta <= alpha:
+                break
 
-        return minEval
+        return (minEval,bestAction)
