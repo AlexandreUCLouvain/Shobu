@@ -45,7 +45,9 @@ class AlphaBetaAgent(Agent):
         Returns:
             bool: True if the search should be cut off, False otherwise.
         """
-        ...
+        if depth == self.max_depth or self.game.is_terminal(state):
+            return False
+        return True
     
     def eval(self, state):
         """Evaluates the given state and returns a score from the perspective of the agent's player.
@@ -56,7 +58,9 @@ class AlphaBetaAgent(Agent):
         Returns:
             float: The evaluated score of the state.
         """
-        ...
+        player_zero = sum(len(ensemble) for liste_sets in state.board for ensemble in liste_sets[::2])
+        player_one = sum(len(ensemble) for liste_sets in state.board for ensemble in liste_sets[1::2])
+        return player_zero - player_one
 
     def alpha_beta_search(self, state):
         """Implements the alpha-beta pruning algorithm to find the best action.
@@ -86,7 +90,7 @@ class AlphaBetaAgent(Agent):
             tuple: A tuple containing the best value achievable from this state and the action that leads to this value.
                 If the state is a terminal state or the depth limit is reached, the action will be None.
         """
-        ...
+        return 1
 
 
     def min_value(self, state, alpha, beta, depth):
@@ -106,4 +110,4 @@ class AlphaBetaAgent(Agent):
             tuple: A tuple containing the best value achievable from this state for the opponent and the action that leads to this value.
                 If the state is a terminal state or the depth limit is reached, the action will be None.
         """
-        ...
+        return 0
